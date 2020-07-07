@@ -61,6 +61,9 @@ class _NewMapState extends State<NewMap> {
               icon: reportNumber < 5 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
               : reportNumber >= 5 && reportNumber < 20 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
               : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+              infoWindow: InfoWindow(
+                title: 'C.R: $reportNumber',
+              )
             ),
           );
         }
@@ -88,7 +91,7 @@ class _NewMapState extends State<NewMap> {
             onMapCreated: onMapCreated,
             zoomGesturesEnabled: true,
             zoomControlsEnabled: false,
-            compassEnabled: false,
+            mapToolbarEnabled: false,
             markers: showCrimeLocations(),
           ),
         ),
