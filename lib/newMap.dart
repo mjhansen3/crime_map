@@ -75,18 +75,52 @@ class _NewMapState extends State<NewMap> {
     ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
     _createMarkerImageFromAsset(context);
 
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _initPosition,
-        myLocationButtonEnabled: false,
-        myLocationEnabled: true,
-        onMapCreated: onMapCreated,
-        zoomGesturesEnabled: true,
-        markers: showCrimeLocations(),
-      ),
+    return Stack(
+      children: <Widget>[
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: _initPosition,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: true,
+            onMapCreated: onMapCreated,
+            zoomGesturesEnabled: true,
+            zoomControlsEnabled: false,
+            compassEnabled: false,
+            markers: showCrimeLocations(),
+          ),
+        ),
+        Positioned(
+          bottom: 15,
+          right: 15,
+          child: FloatingActionButton(
+            heroTag: 'addCrimeLocation',
+            onPressed: () {},
+            backgroundColor: Color(0xFFE85D09),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          )
+        ),
+        Positioned(
+            bottom:85,
+            right: 15,
+            child: FloatingActionButton(
+              heroTag: 'myLocation',
+              onPressed: () {
+                moveToCurrentUserLocation();
+              },
+              backgroundColor: Color(0xFFFFFFFF),
+              child: Icon(
+                Icons.my_location,
+                color: Colors.black45,
+              ),
+            )
+        ),
+      ],
     );
   }
 
@@ -126,7 +160,7 @@ class _NewMapState extends State<NewMap> {
     location.getLocation().then((locationData) {
       setState(() {
         loadingMap = false;
-        showCrimeLocations();
+        //showCrimeLocations();
       });
       LatLng target = LatLng(locationData.latitude, locationData.longitude);
       moveToLocation(target, 15.0);
