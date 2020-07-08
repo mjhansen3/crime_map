@@ -52,6 +52,11 @@ class AuthServices {
       'name': user.displayName,
     }, merge: true);
   }
+
+  void signOutUser() async {
+    await FirebaseAuth.instance.signOut();
+    _googleSignIn.signOut();
+  }
 }
 
 final AuthServices authServices = AuthServices();

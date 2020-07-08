@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crime_map/addCrimeLocation.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:place_picker/place_picker.dart';
 
 class NewMap extends StatefulWidget{
   @override
@@ -16,8 +19,8 @@ class NewMap extends StatefulWidget{
 class _NewMapState extends State<NewMap> {
   Completer<GoogleMapController> mapController = Completer();
   BitmapDescriptor _markerIcon;
-  BitmapDescriptor markerIcon;
   Set<Marker> crimeMarkers = HashSet<Marker>();
+  LatLng target;
   //var crimeMarkers = [];
 
   int reportNumber;
@@ -49,23 +52,23 @@ class _NewMapState extends State<NewMap> {
         for(int i = 0; i < snapshot.documents.length; i++) {
           setState(() {
             reportNumber = snapshot.documents[i].data['report_number'];
-          });
 
-          crimeMarkers.add(
-            Marker(
-              markerId: MarkerId(snapshot.documents[i].documentID),
-              position: LatLng(
-                snapshot.documents[i].data['location'].latitude,
-                snapshot.documents[i].data['location'].longitude,
+            crimeMarkers.add(
+              Marker(
+                  markerId: MarkerId(snapshot.documents[i].documentID),
+                  position: LatLng(
+                    snapshot.documents[i].data['location'].latitude,
+                    snapshot.documents[i].data['location'].longitude,
+                  ),
+                  icon: reportNumber < 5 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
+                      : reportNumber >= 5 && reportNumber < 20 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
+                      : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                  infoWindow: InfoWindow(
+                    title: 'C.R: $reportNumber',
+                  )
               ),
-              icon: reportNumber < 5 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
-              : reportNumber >= 5 && reportNumber < 20 ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
-              : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-              infoWindow: InfoWindow(
-                title: 'C.R: $reportNumber',
-              )
-            ),
-          );
+            );
+          });
         }
       }
     });
@@ -77,6 +80,8 @@ class _NewMapState extends State<NewMap> {
   Widget build(BuildContext context) {
     ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
     _createMarkerImageFromAsset(context);
+
+    setState(() {});
 
     return Stack(
       children: <Widget>[
@@ -100,7 +105,21 @@ class _NewMapState extends State<NewMap> {
           right: 15,
           child: FloatingActionButton(
             heroTag: 'addCrimeLocation',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    print("Target Coordinate to be sent: $target");
+
+                    return AddCrimeLocation(
+                      currentLatLng: target,
+                    );
+                  },
+                )
+              );
+              //showPlacePicker(context);
+            },
             backgroundColor: Color(0xFFE85D09),
             child: Icon(
               Icons.add,
@@ -163,9 +182,12 @@ class _NewMapState extends State<NewMap> {
     location.getLocation().then((locationData) {
       setState(() {
         loadingMap = false;
+        target = LatLng(locationData.latitude, locationData.longitude);
         //showCrimeLocations();
       });
-      LatLng target = LatLng(locationData.latitude, locationData.longitude);
+
+      print("Target coordinates: $target");
+
       moveToLocation(target, 15.0);
     }).catchError((error) {
       print(error);

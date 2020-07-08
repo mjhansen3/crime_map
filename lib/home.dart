@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'auth.dart';
 import 'map.dart';
 import 'newMap.dart';
 
@@ -24,6 +25,23 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       backgroundColor: Color(0xFFEFF0F1),
+      appBar: AppBar(
+        title: Text('Crime Map'),
+        centerTitle: true,
+        backgroundColor: Color(0xFFE85D09),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () async {
+              authServices.signOutUser();
+              Navigator.popAndPushNamed(context, '/login');
+            },
+            child: Icon(
+              Icons.power_settings_new,
+              color: Colors.white,
+            ),
+          )
+        ],
+      ),
       body: WillPopScope(
           child: NewMap(),
           onWillPop: onWillPop,

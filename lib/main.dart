@@ -1,27 +1,31 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'auth.dart';
 import 'home.dart';
 import 'login.dart';
+import 'addCrimeLocation.dart';
 
 void main() {
   runApp(CrimeMapApp());
 }
 
 class CrimeMapApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Crime Map',
       home: SplashScreen(),
       routes: <String, WidgetBuilder>{
         '/home': (context) => Home(),
         '/login': (context) => Login(),
+        '/addCrimeLocation': (context) => AddCrimeLocation(),
       },
     );
   }
@@ -33,8 +37,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  /*bool isLoggedIn() {
+    if (FirebaseAuth.instance.currentUser() != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }*/
 
   void splashTimeOut() {
+    /*if(isLoggedIn()) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }*/
+
     Navigator.pushReplacementNamed(context, '/login');
   }
 

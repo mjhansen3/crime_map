@@ -59,6 +59,13 @@ dependencies:
   #flushbar
   flushbar: ^1.10.4
 
+  #place_picker
+  place_picker:
+    path: ./place_picker-0.9.14_custom/
+
+  #flutter_dotenv
+  flutter_dotenv: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -81,6 +88,7 @@ flutter:
     - assets/img/google_ico.png
     - assets/img/google_ico_color.png
     - assets/img/marker.png
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
